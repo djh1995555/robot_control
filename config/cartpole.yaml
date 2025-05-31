@@ -1,0 +1,15 @@
+
+simulator: mujoco
+mujoco_cfg: {
+  sim_duration: 10,
+  xml_path: resources/cartpole/cart_pole.xml,
+}
+issac_gym_cfg: {
+  sim_duration: 10
+}
+
+controller: lqr
+lqr_cfg: {
+
+}
+
