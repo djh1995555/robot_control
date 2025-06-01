@@ -4,7 +4,7 @@ import yaml
 from env.simulator import *
 from controller import *
 from env.task import *
-from utils import task_registry
+from utils import registry
 
 ROBOT_CONTROL_ROOT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
 
@@ -13,7 +13,7 @@ def main(args):
     with open(config_filepath, 'r') as f:
         cfg = yaml.load(f, Loader=yaml.FullLoader)
 
-    simulator= task_registry.get_components(cfg['simulator'], args.task, f"{args.task}_{cfg['controller']}", cfg)
+    simulator= registry.get_components(cfg['simulator'], args.task, f"{args.task}_{cfg['controller']}", cfg)
     simulator.run_simulation()    
 
 if __name__ == '__main__':

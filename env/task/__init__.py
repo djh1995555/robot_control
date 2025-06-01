@@ -1,4 +1,4 @@
 from env.task.cartpole.cartpole import Cartpole
 
-from utils.task_registry import task_registry
-task_registry.register_task( "cartpole", Cartpole)
+from utils.registry import registry
+registry.register_task( "cartpole", Cartpole)

@@ -10,11 +10,7 @@ class MujocoSimulator(BaseSimulator):
         self.model = mujoco.MjModel.from_xml_path(self.cfg['xml_path'])
         self.data = mujoco.MjData(self.model)
 
-        # init state
-        self.data.qpos[0] = 2.5   # cart x at 0
-        self.data.qpos[5] = 0.5   # pole hinge angle (slightly tilted)
-        self.data.qvel[0] = -0.35
-        self.data.qvel[5] = -0.35
+        self.data = self.task.init_state(self.data)
         mujoco.mj_forward(self.model, self.data)
 
     def run_simulation(self):
@@ -26,10 +22,7 @@ class MujocoSimulator(BaseSimulator):
                 step_start = time.time()
                 # todo: LQR的输入要统一化，这里用task做一个适配层
                 action = self.controller.generate_action(self.data)
-
-                self.data.ctrl[0] = action
-                if self.model.nu > 1:
-                    self.data.ctrl[1] = 0.0 
+                self.data = self.task.action_adoption(action, self.model, self.data)
                 # mj_step can be replaced with code that also evaluates
                 # a policy and applies a control signal before stepping the physics.
                 mujoco.mj_step(self.model, self.data)

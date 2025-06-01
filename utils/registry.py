@@ -1,4 +1,4 @@
-class TaskRegistry():
+class Registry():
     def __init__(self):
         self.task_classes = {}
         self.controller_classes = {}
@@ -19,4 +19,4 @@ class TaskRegistry():
         simulator = self.simulator_classes[simulator_name](task, controller, cfg)
         return simulator
 
-task_registry = TaskRegistry()
+registry = Registry()
