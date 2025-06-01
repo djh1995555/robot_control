@@ -1,4 +1,4 @@
-
+task: wheel_robot
 model_cfg: {
   init_state: {
     cart_pos: 2.5,   # cart x at 0

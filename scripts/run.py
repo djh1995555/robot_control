@@ -5,16 +5,16 @@ from src.simulator import *
 from src.controller import *
 from src.task import *
 from src.utils import registry
-
-ROBOT_CONTROL_ROOT_DIR = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+from src.utils.env import ROBOT_CONTROL_ROOT_DIR
 
 def main(args):
-    config_filepath = os.path.join(ROBOT_CONTROL_ROOT_DIR,'config',f'{args.task}.yaml')
+    config_filepath = os.path.join(ROBOT_CONTROL_ROOT_DIR,'config',f'{args.task}',f'{args.task}.yaml')
     with open(config_filepath, 'r') as f:
         cfg = yaml.load(f, Loader=yaml.FullLoader)
 
     simulator= registry.get_components(cfg['simulator'], args.task, f"{args.task}_{cfg['controller']}", cfg)
-    simulator.run_simulation()    
+    simulator.run_simulation()   
+    simulator.generate_report() 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser('Simulation')

@@ -1,0 +1,24 @@
+
+target_panel: {
+  control: [
+    'action',
+  ],
+  position: [
+    'cart_pos',
+  ],
+  angle: [
+    'pole_pos'
+  ],
+  spped: [
+    'cart_v'
+  ],
+  omega: [
+    'pole_v'
+  ],
+  K: [
+    'K0',
+    'K1',
+    'K2',
+    'K3',
+  ]
+}

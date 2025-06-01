@@ -4,3 +4,9 @@ class BaseContoller():
 
     def reset(self, data):
         None
+
+    def set_data_logger(self, data_logger):
+        self.data_logger = data_logger
+
+    def record_logger(self):
+        None

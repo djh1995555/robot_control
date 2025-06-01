@@ -60,13 +60,25 @@ class CartpoleLQRContoller(BaseNumericalContoller):
         K = inv(R) @ B.T @ P
         return K
 
+    def record_logger(self):
+        self.data_logger.add_data('cart_pos', self.x)
+        self.data_logger.add_data('cart_v', self.x_dot)
+        self.data_logger.add_data('pole_pos', self.theta)
+        self.data_logger.add_data('pole_v', self.theta_dot)
+        self.data_logger.add_data('action', self.action)
+        self.data_logger.add_data('K0', self.K[0][0])
+        self.data_logger.add_data('K1', self.K[0][1])
+        self.data_logger.add_data('K2', self.K[0][2])
+        self.data_logger.add_data('K3', self.K[0][3])
+
     def generate_action(self, data):
         # Read sensor data
-        x = data.sensordata[SENSOR_CART_POS]
-        x_dot = data.sensordata[SENSOR_CART_VEL]
+        self.x = data.sensordata[SENSOR_CART_POS]
+        self.x_dot = data.sensordata[SENSOR_CART_VEL]
         theta_raw = data.sensordata[SENSOR_POLE_ANG]
-        theta = ((theta_raw + jnp.pi) % (2 * jnp.pi)) - jnp.pi
-        theta_dot = data.sensordata[SENSOR_POLE_ANGVEL]
+        self.theta = ((theta_raw + jnp.pi) % (2 * jnp.pi)) - jnp.pi
+        self.theta_dot = data.sensordata[SENSOR_POLE_ANGVEL]
+        state = np.array([self.x, self.theta, self.x_dot, self.theta_dot])
 
         # build model
         mc = 1.0
@@ -79,14 +91,10 @@ class CartpoleLQRContoller(BaseNumericalContoller):
 
         # Linearize around upright equilibrium
         A, B = self.linearize_cartpole(params_jax)
-        K = self.compute_lqr_gain(A, B, Q_lqr, R_lqr)  # shape (1,4)
-
-        # If your MuJoCo model uses a different zero angle for upright,
-        # shift the sensor reading here, e.g.:
-        # theta = theta - np.pi/2   # if sensor=+1.57 rad means "upright"
-
-        state = np.array([x, theta, x_dot, theta_dot])
+        self.K = self.compute_lqr_gain(A, B, Q_lqr, R_lqr)  # shape (1,4)
         
         # LQR control law:  u = -(K state)
-        action = -(K @ state)[0]
-        return action
+        self.action = -(self.K @ state)[0]
+
+        self.record_logger()
+        return self.action

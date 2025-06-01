@@ -1,0 +1,22 @@
+target_panel: {
+  control: [
+    'action',
+  ],
+  spped: [
+    'velocity_filtered',
+    'target_velocity'
+  ],
+  pitch: [
+    'pitch'
+  ],
+  pitch_dot: [
+    'pitch_dot',
+    'pitch_dot_filtered'
+  ],
+  K: [
+    'K0',
+    'K1',
+    'K2',
+    'K3',
+  ]
+}

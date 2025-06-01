@@ -10,18 +10,20 @@ class MujocoSimulator(BaseSimulator):
         self.model = mujoco.MjModel.from_xml_path(self.cfg['xml_path'])
         self.data = mujoco.MjData(self.model)
 
+        self.reset()
+
         self.data = self.task.mujoco_init_state(self.data)
         mujoco.mj_forward(self.model, self.data)
 
-    def get_mj_data(self):
-        return self.data
+    def reset(self):
+        self.controller.reset(self.data)
     
     def run_simulation(self):
         # Close the viewer automatically after 30 wall-seconds.
         with mujoco.viewer.launch_passive(self.model, self.data) as viewer:
             start = time.time()
             while viewer.is_running() and time.time() - start < self.cfg['sim_duration']:
-                current_time = time.time()
+                self.data_logger.add_data('timestamp', time.time())
                 step_start = time.time()
                 # todo: LQR的输入要统一化，这里用task做一个适配层
                 action = self.controller.generate_action(self.data)
@@ -41,3 +43,5 @@ class MujocoSimulator(BaseSimulator):
                 time_until_next_step = self.model.opt.timestep - (time.time() - step_start)
                 if time_until_next_step > 0:
                     time.sleep(time_until_next_step)
+        
+        self.data_logger.fill_lost_data()
