@@ -19,6 +19,6 @@ def main(args):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser('Simulation')
     root_path = os.path.abspath(os.path.join(os.path.dirname(os.path.abspath(__file__)),'..'))
-    parser.add_argument('--task', required=True, choices=['cartpole', 'flywheel', 'wheel_robot', 'vehicle'])
+    parser.add_argument('--task', required=True, choices=['h1','cartpole', 'flywheel', 'wheel_robot', 'vehicle'])
     args = parser.parse_args()
     main(args)
