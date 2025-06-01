@@ -1,0 +1,24 @@
+
+model_cfg: {
+  init_state: {
+    arm_joint_pos: 0.1,   # cart x at 0
+    wheel_joint_ange: 0.0,   # pole hinge angle (slightly tilted)
+    arm_joint_v: 0.0,
+    wheel_joint_v: 0.0
+  }
+}
+
+simulator: mujoco
+mujoco_cfg: {
+  sim_duration: 10,
+  xml_path: resources/flywheel/scene.xml,
+}
+issac_gym_cfg: {
+  sim_duration: 10
+}
+
+controller: lqr
+lqr_cfg: {
+
+}
+

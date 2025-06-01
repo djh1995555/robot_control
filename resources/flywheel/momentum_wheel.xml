@@ -1,0 +1,66 @@
+<mujoco model="momentum_wheel">
+  <option integrator="RK4" density="1.225" viscosity="1.8e-5"/>
+  <compiler inertiafromgeom="false" meshdir="assets" autolimits="true"/>
+
+  <default>
+    <default class="momentum_wheel">
+      <default class="visual">
+        <geom group="2" type="mesh" contype="0" conaffinity="0"/>
+      </default>
+      <default class="collision">
+        <geom group="3" type="mesh"/>
+      </default>
+      <site group="5"/>
+    </default>
+  </default>
+
+  <asset>
+    <material name="polished_plastic" rgba="0.631 0.659 0.678 1"/>
+    <material name="polished_gold" rgba="0.969 0.878 0.6 1"/>
+    <material name="medium_gloss_plastic" rgba="0.109 0.184 0.0 1"/>
+    <material name="propeller_plastic" rgba="0.792 0.820 0.933 1"/>
+    <material name="white" rgba="1 1 1 1"/>
+    <material name="body_frame_plastic" rgba="0.102 0.102 0.102 1"/>
+    <material name="burnished_chrome" rgba="0.898 0.898 0.898 1"/>
+    <material name="arm_material" rgba="0.973 0.53 0.004 1"/>
+    <material name="wheel_material" rgba="0.917 0.917 0.917 1"/>
+    <material name="base_material" rgba="0.5 0.5 0.5 1"/>
+
+    <mesh file="arm.stl"/>
+    <mesh file="arm_collision.stl"/>
+    <mesh file="base.stl"/>
+    <mesh file="base_collision.stl"/>
+    <mesh file="wheel.stl"/>
+    <mesh file="wheel_collision.stl"/>
+  </asset>
+
+  <worldbody>
+    <body name="momentum_wheel" pos="0 0 0.25" euler="90 0 0" childclass="momentum_wheel">
+      <geom mesh="base" material="base_material" class="visual"/>
+      <!-- <geom mesh="base_collision" class="collision"/> -->
+
+      <body name="arm" pos="0 0 0.015" euler="0 0 180">
+        <inertial pos="0 -0.075 0.005" mass="0.1" diaginertia="257.32684e-6 3.68828e-6 259.37025e-6"/>
+        <joint name="arm_joint" type="hinge" pos="0 0 0" axis="0 0 1" damping="0.0"/>
+        <geom mesh="arm" material="arm_material" class="visual"/>
+        <geom mesh="arm_collision" class="collision"/>
+
+        <body name="wheel" pos="0 -0.15 0.010" euler="0 0 0">
+          <inertial pos="0 0 0.010" mass="1.0" diaginertia="1886.16302e-6 1886.16302e-6 3708.52175e-6"/>
+          <joint name="wheel_joint" type="hinge" pos="0 0 0" axis="0 0 1" damping="0.0"/>
+          <geom mesh="wheel" material="wheel_material" class="visual"/>
+          <geom mesh="wheel_collision" class="collision"/>
+        </body>
+        
+      </body>
+    </body>
+  </worldbody>
+
+  <actuator>
+    <motor joint="arm_joint" name="arm_torque" gear="0.1" ctrllimited="true" ctrlrange="-1 1" />
+    <motor joint="wheel_joint" name="wheel_torque" gear="0.1" ctrllimited="true" ctrlrange="-1 1" />
+    <!-- <position name="arm_position" joint="arm_joint" kp="10" kv="1" />
+    <position name="wheel_position" joint="wheel_joint" kp="10" kv="1" /> -->
+  </actuator>
+
+</mujoco>

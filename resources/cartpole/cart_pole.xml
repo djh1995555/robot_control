@@ -14,7 +14,6 @@
                 or fix it. 
             -->
             <joint name="chasis_slider_x" type="slide" axis="1 0 0"/>
-            <!--  <joint name="chasis_slider_z" type="slide" axis="0 0 1"/>  -->
 
             <geom type="box" size="0.75 0.5 0.25" rgba="1 1 0.1 1" mass="1"/>
 

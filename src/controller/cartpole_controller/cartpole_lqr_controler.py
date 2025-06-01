@@ -1,4 +1,4 @@
-from controller.base_controller.base_numerical_controler import BaseNumericalContoller
+from src.controller.base_controller.base_numerical_controler import BaseNumericalContoller
 from jax.numpy.linalg import inv
 import jax.numpy as jnp
 import numpy as np
@@ -61,31 +61,25 @@ class CartpoleLQRContoller(BaseNumericalContoller):
         return K
 
     def generate_action(self, data):
-        mc = 1.0
-        mp = 1.0
-        l = 1.0
-        g = 9.81
-        params_jax = jnp.array([mc, mp, l, g])
-
-        # Cost matrices
-        Q_lqr = jnp.diag(jnp.array([50.0, 100.0, 5.0, 20.0]))  # penalize x, theta, x_dot, theta_dot
-        R_lqr = jnp.array([[0.1]])                            # penalize input force
-
-        # Linearize around upright equilibrium
-        A, B = self.linearize_cartpole(params_jax)
-        K = self.compute_lqr_gain(A, B, Q_lqr, R_lqr)  # shape (1,4)
-
-        """
-        1) Read state [x, theta, x_dot, theta_dot] from sensor data.
-        2) Compute control:  u = -(K @ state).
-        3) Return u as the force on the cart.
-        """
         # Read sensor data
         x = data.sensordata[SENSOR_CART_POS]
         x_dot = data.sensordata[SENSOR_CART_VEL]
         theta_raw = data.sensordata[SENSOR_POLE_ANG]
         theta = ((theta_raw + jnp.pi) % (2 * jnp.pi)) - jnp.pi
         theta_dot = data.sensordata[SENSOR_POLE_ANGVEL]
+
+        # build model
+        mc = 1.0
+        mp = 1.0
+        l = 1.0
+        g = 9.81
+        params_jax = jnp.array([mc, mp, l, g])
+        Q_lqr = jnp.diag(jnp.array([50.0, 100.0, 5.0, 20.0]))  # penalize x, theta, x_dot, theta_dot
+        R_lqr = jnp.array([[0.1]])                            # penalize input force
+
+        # Linearize around upright equilibrium
+        A, B = self.linearize_cartpole(params_jax)
+        K = self.compute_lqr_gain(A, B, Q_lqr, R_lqr)  # shape (1,4)
 
         # If your MuJoCo model uses a different zero angle for upright,
         # shift the sensor reading here, e.g.:

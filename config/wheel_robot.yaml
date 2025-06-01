@@ -1,0 +1,24 @@
+
+model_cfg: {
+  init_state: {
+    cart_pos: 2.5,   # cart x at 0
+    hinge_ange: 0.5,   # pole hinge angle (slightly tilted)
+    cart_v: -0.35,
+    hinge_v: -0.35
+  }
+}
+
+simulator: mujoco
+mujoco_cfg: {
+  sim_duration: 10,
+  xml_path: resources/wheel_robot/scene.xml,
+}
+issac_gym_cfg: {
+  sim_duration: 10
+}
+
+controller: lqr
+lqr_cfg: {
+
+}
+

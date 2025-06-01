@@ -17,6 +17,8 @@ class Registry():
         task = self.task_classes[task_name](cfg)
         controller = self.controller_classes[controller_name](cfg)
         simulator = self.simulator_classes[simulator_name](task, controller, cfg)
+        mj_data = simulator.get_mj_data()
+        controller.reset(mj_data)
         return simulator
 
 registry = Registry()
