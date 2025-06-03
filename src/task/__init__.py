@@ -8,3 +8,4 @@ registry.register_task( "cartpole", Cartpole)
 registry.register_task( "flywheel", Flywheel)
 registry.register_task( "wheel_robot", WheelRobot)
 registry.register_task( "h1", H1Robot)
+

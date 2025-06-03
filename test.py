@@ -1,4 +1,5 @@
-from datetime import datetime
-current_time = datetime.now()
-formatted_time = current_time.strftime("%Y_%m_%d_%H_%M_%S")
-print(formatted_time)
+from pinocchio import pin
+
+model = pin.buildModelFromUrdf('/home/djh/robot/robot_control/resources/robot/h1/urdf/h1.urdf')
+data = model.createData()
+print(pin.computeTotalMass(model,data))
