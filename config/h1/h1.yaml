@@ -2,7 +2,7 @@ task: h1
 model_cfg: {
 
 }
-
+urdf_path: resources/robot/h1/urdf/h1.urdf
 simulator: mujoco
 mujoco_cfg: {
   sim_duration: 10,
