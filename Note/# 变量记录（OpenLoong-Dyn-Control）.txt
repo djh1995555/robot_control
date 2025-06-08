@@ -1,0 +1,59 @@
+# 变量记录（OpenLoong-Dyn-Control）
+![alt text](image-25.png)
+mpc_N:预测时域
+nx：状态量个数
+nu：控制量个数
+Ac：连续A
+
+A：离散A
+R_curz：旋转矩阵Rz
+Bc：连续B
+B：离散B
+pf2com：接触点到质心的距离
+pf2comd：接触点到期望质心点的距离
+Ic：质心转动惯量（机器人坐标系）
+Ic_W_inv：质心转动惯量（世界坐标系）
+m：质量
+Aqp：预测A
+Bqp：预测B
+ch：控制时域
+L：Q
+K：R
+delta_U：
+Xd：任务目标（预测时域序列）
+js_eul_des: 期望状态量-欧拉角
+js_pos_des: 期望状态量-质心位置
+js_omega_des: 期望状态量-角速度
+js_vel_des: 期望状态量-质心速度
+X_cur：当前状态
+base_rpy：机身欧拉角
+q：关节位置
+dq：关节速度
+dqq：关节角速度
+pCoM：质心位置
+
+
+H：二次规划H
+C：二次规划g
+As：不等式约束矩阵
+Asfr：摩擦相关的不等式约束矩阵
+Astxy：xy力矩相关的不等式约束矩阵
+Astz：z力矩相关的不等式约束矩阵
+ubA：不等式约束上限矩阵
+lbA：不等式约束下限矩阵
+u_up：不等式约束上限
+u_low：不等式约束下限
+Ufe：通过MPC计算得到的第一组控制量，分别是左右脚的力（2*3）和力矩（2*3）
+fe_react_tau_cmd：通过MPC计算得到的第一组控制量
+dX_cal：通过MPC计算得到的第一组控制量推导得到的预测状态微分
+delta_X：通过MPC计算得到的第一组控制量推导得到的预测状态变化量
+X_cal：通过MPC计算得到的第一组控制量推导得到的预测状态
+
+Fr_ff：Ufe的前12个，其实就是去掉了最后一项（不确定是啥）
+Jfe：松弛优化中的JcTO
+dyn_Non：科氏力
+dyn_M：广义质量矩阵
+Sf：选择矩阵
+delta_q_final_kin：WBC输出的delta q
+dq_final_kin：WBC输出的dq
+ddq_final_kin：WBC输出的ddq

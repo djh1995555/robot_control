@@ -55,7 +55,8 @@
     ![alt text](image-19.png)![alt text](image-20.png)![alt text](image-22.png)第三条公式要对旋转矩阵R（A空间变换到B空间）求导，有更简单的方法， 旋转矩阵可以被看作是B空间的基向量在A空间中的表示（三列r向量拼起来就是R矩阵），所以对旋转矩阵R求导就等于对基向量求导，对向量求导又等于角速度乘上向量长度（单位旋转向量对时间求导就等于角速度）![alt text](image-23.png)![alt text](image-24.png)三个符号分别是roll，pitch和yaw，是相对于机身的三个角速度。w是相对于世界的绝对角速度。举个例子，机器人在弯腰的过程中躯体发生旋转（yaw），这时垂直方向（z轴）上的角速度就不等于前面的yaw，会受到弯腰动作（pitch）的影响
    2. 系统动力学方程![alt text](image-25.png)四个状态量分别是欧拉角，质心位置，角速度和质心速度![alt text](image-26.png)前向欧拉离散化![alt text](image-27.png)
    3. 约束：![alt text](image-28.png)
-   4. 求解器：qpOASES和OSQP![alt text](image-29.png)
+   4. 求解器：qpOASES和OSQP![alt text](image-29.png)  
+   代码里是这种形式![alt text](qpOASES.png)
    5. 转化成标准形式![alt text](image-31.png)![alt text](image-30.png)
    6. 工具：casdi（看起来很好用）：一种符号框架，可以直接定义符号，调用不同的求解器来求解，也可以用来求解雅可比矩阵，海森矩阵 之类的东西
 5. 关节力矩求解：上面的求解结果是足端的力和力矩，但是实际上控制的是关节的力矩，所以还需要求力矩。
@@ -95,3 +96,6 @@
 
 # [双足行走的强化学习算法介绍与部署](https://www.bilibili.com/video/BV1Kq4PeEE1H/?spm_id_from=333.1387.favlist.content.click&vd_source=cd40de797ad94ee69dcb9663bd87c89f)
 其中30分之后，会提到一些实际工作的问题，可以后期看看
+
+
+
