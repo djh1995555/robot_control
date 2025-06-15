@@ -4,7 +4,7 @@ class Flywheel(BaseTask):
     def __init__(self, cfg):
         super().__init__(cfg)
 
-    def mujoco_init_state(self, data):
+    def mujoco_init_state(self, model, data):
         data.qpos[0] = self.cfg['model_cfg']['init_state']['arm_joint_pos']
         data.qpos[1] = self.cfg['model_cfg']['init_state']['wheel_joint_ange']
         data.qvel[0] = self.cfg['model_cfg']['init_state']['arm_joint_v']

@@ -71,13 +71,13 @@ class CartpoleLQRContoller(BaseNumericalContoller):
         self.data_logger.add_data('K2', self.K[0][2])
         self.data_logger.add_data('K3', self.K[0][3])
 
-    def generate_action(self, data):
+    def generate_action(self, state):
         # Read sensor data
-        self.x = data.sensordata[SENSOR_CART_POS]
-        self.x_dot = data.sensordata[SENSOR_CART_VEL]
-        theta_raw = data.sensordata[SENSOR_POLE_ANG]
+        self.x = state.sensordata[SENSOR_CART_POS]
+        self.x_dot = state.sensordata[SENSOR_CART_VEL]
+        theta_raw = state.sensordata[SENSOR_POLE_ANG]
         self.theta = ((theta_raw + jnp.pi) % (2 * jnp.pi)) - jnp.pi
-        self.theta_dot = data.sensordata[SENSOR_POLE_ANGVEL]
+        self.theta_dot = state.sensordata[SENSOR_POLE_ANGVEL]
         state = np.array([self.x, self.theta, self.x_dot, self.theta_dot])
 
         # build model

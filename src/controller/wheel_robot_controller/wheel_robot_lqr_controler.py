@@ -42,12 +42,12 @@ class WheelRobotLQRContoller(BaseNumericalContoller):
         # direction as it's rotated 180deg from the other
         return (vel_m_0 * -1 + vel_m_1) / 2.0
     
-    def calculate_lqr_velocity(self, data) -> float:
-        self.pitch = -self.get_pitch(data)
-        self.pitch_dot = self.get_pitch_dot(data)
+    def calculate_lqr_velocity(self, state) -> float:
+        self.pitch = -self.get_pitch(state)
+        self.pitch_dot = self.get_pitch_dot(state)
 
         self.pitch_dot_filtered = (self.pitch_dot_filtered * .975) + (self.pitch_dot * .025)
-        self.velocity_filtered = (self.velocity_filtered * .975) + (self.get_wheel_velocity(data) * .025)
+        self.velocity_filtered = (self.velocity_filtered * .975) + (self.get_wheel_velocity(state) * .025)
 
         velocity_linear_error = self.target_velocity - self.velocity_filtered 
         state = np.array([0 - self.pitch, self.pitch_dot_filtered, 0, velocity_linear_error])
@@ -57,8 +57,8 @@ class WheelRobotLQRContoller(BaseNumericalContoller):
         return -self.action / WHEEL_RADIUS
     
 
-    def generate_action(self, data):
-        vel = self.calculate_lqr_velocity(data)
+    def generate_action(self, state):
+        vel = self.calculate_lqr_velocity(state)
         vel = clamp(vel, -MAX_MOTOR_VEL, MAX_MOTOR_VEL)
         self.record_logger()
         return -vel + self.yaw, vel + self.yaw

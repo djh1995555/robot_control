@@ -12,7 +12,7 @@ class MujocoSimulator(BaseSimulator):
 
         self.reset()
 
-        self.data = self.task.mujoco_init_state(self.data)
+        self.data = self.task.mujoco_init_state(self.model, self.data)
         mujoco.mj_forward(self.model, self.data)
 
     def reset(self):
@@ -26,7 +26,8 @@ class MujocoSimulator(BaseSimulator):
                 self.data_logger.add_data('timestamp', time.time())
                 step_start = time.time()
                 # todo: LQR的输入要统一化，这里用task做一个适配层
-                action = self.controller.generate_action(self.data)
+                state = self.task.mujoco_state_adoption(self.model, self.data)
+                action = self.controller.generate_action(state)
                 self.data = self.task.mujoco_action_adoption(action, self.model, self.data)
                 # mj_step can be replaced with code that also evaluates
                 # a policy and applies a control signal before stepping the physics.

@@ -4,7 +4,10 @@ class Cartpole(BaseTask):
     def __init__(self, cfg):
         super().__init__(cfg)
 
-    def mujoco_init_state(self, data):
+    def mujoco_init_state(self, model, data):
+        # init state using mujoco
+        
+        # init mujoco state from cfg
         data.qpos[0] = self.cfg['model_cfg']['init_state']['cart_pos']
         data.qpos[5] = self.cfg['model_cfg']['init_state']['hinge_ange']
         data.qvel[0] = self.cfg['model_cfg']['init_state']['cart_v']

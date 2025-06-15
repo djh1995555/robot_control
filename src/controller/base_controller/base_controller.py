@@ -11,5 +11,5 @@ class BaseContoller():
     def record_logger(self):
         None
 
-    def generate_action(self, data):
+    def generate_action(self, state):
         None

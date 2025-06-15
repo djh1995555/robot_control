@@ -7,7 +7,10 @@ class WheelRobot(BaseTask):
     def __init__(self, cfg):
         super().__init__(cfg)
 
-    def mujoco_init_state(self, data):
+    def mujoco_init_state(self, model, data):
+        # init state using mujoco
+        
+        # init mujoco state from cfg
         # face a random direction
         x_rot = (np.random.random() - 0.5) * 2 * math.pi
         # rotate and pitch slightly
