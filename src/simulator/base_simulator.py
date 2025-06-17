@@ -6,9 +6,11 @@ class BaseSimulator():
         self.cfg = cfg
         self.task = task
         self.controller = controller
+
         self.data_logger = DataLogger()
         self.controller.set_data_logger(self.data_logger)
         self.task.set_data_logger(self.data_logger)
+        
         self.report_generator = ReportGenerator(cfg)
 
     def reset(self):

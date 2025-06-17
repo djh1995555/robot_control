@@ -71,7 +71,7 @@ class CartpoleLQRContoller(BaseNumericalContoller):
         self.data_logger.add_data('K2', self.K[0][2])
         self.data_logger.add_data('K3', self.K[0][3])
 
-    def generate_action(self, data):
+    def generate_action(self, data, sim_time):
         # Read sensor data
         self.x = data.sensordata[SENSOR_CART_POS]
         self.x_dot = data.sensordata[SENSOR_CART_VEL]

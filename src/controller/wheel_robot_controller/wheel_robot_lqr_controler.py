@@ -57,7 +57,7 @@ class WheelRobotLQRContoller(BaseNumericalContoller):
         return -self.action / WHEEL_RADIUS
     
 
-    def generate_action(self, data):
+    def generate_action(self, state, sim_time):
         vel = self.calculate_lqr_velocity(data)
         vel = clamp(vel, -MAX_MOTOR_VEL, MAX_MOTOR_VEL)
         self.record_logger()
