@@ -5,7 +5,7 @@ class FlywheelLQRContoller(BaseNumericalContoller):
     def __init__(self, cfg):
         super().__init__(cfg)
 
-    def generate_action(self, data):
+    def generate_action(self, state, sim_time):
         # 状态变量获取
         x1 = data.joint('arm_joint').qpos[0]  # 摆杆旋转角度
         x2 = data.joint('arm_joint').qvel[0]  # 摆杆旋转速度
