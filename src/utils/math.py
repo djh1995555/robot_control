@@ -39,3 +39,17 @@ def eul2rot(roll, pitch, yaw):
 def clamp(n, minn, maxn):
     return max(min(maxn, n), minn)
 
+# 计算加权伪逆
+# 主要用于任务空间到关节空间的映射，特别是在加权最小二乘（Weighted Least Squares）问题中
+# 常用于层级任务控制，计算任务的零空间投影或优先级调整
+def pseudoInv_right_weighted(J, W):
+    return np.linalg.pinv(J.T @ W @ J) @ J.T @ W
+
+# 计算动态伪逆
+# 主要用于动力学控制（如加速度级控制），考虑机器人的动力学特性（如质量矩阵 M）
+# 在操作空间动力学（Operational Space Dynamics）中，用于计算加速度命令对应的关节加速度。
+def dyn_pseudoInv(J, M_inv, use_dynamics=True):
+    if use_dynamics:
+        return M_inv @ J.T @ np.linalg.pinv(J @ M_inv @ J.T)
+    else:
+        return np.linalg.pinv(J)

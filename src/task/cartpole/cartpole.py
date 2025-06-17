@@ -12,7 +12,7 @@ class Cartpole(BaseTask):
         data.qpos[5] = self.cfg['model_cfg']['init_state']['hinge_ange']
         data.qvel[0] = self.cfg['model_cfg']['init_state']['cart_v']
         data.qvel[5] = self.cfg['model_cfg']['init_state']['hinge_v']
-        return data
+        return None, data
     
     def mujoco_action_adoption(self, action, model, data):
         data.actuator('cart_force').ctrl[0] = action

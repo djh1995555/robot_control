@@ -8,6 +8,7 @@ class IkRes:
         self.itr = 0
         self.status = 0
         self.jointPosRes = None
+        
 class KinDynSolver():
     def __init__(self, cfg):
         urdf_path = cfg['urdf_path']

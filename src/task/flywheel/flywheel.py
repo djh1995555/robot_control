@@ -9,7 +9,7 @@ class Flywheel(BaseTask):
         data.qpos[1] = self.cfg['model_cfg']['init_state']['wheel_joint_ange']
         data.qvel[0] = self.cfg['model_cfg']['init_state']['arm_joint_v']
         data.qvel[1] = self.cfg['model_cfg']['init_state']['wheel_joint_v']
-        return data
+        return None, data
     
     def mujoco_action_adoption(self, action, model, data):
         data.actuator('arm_torque').ctrl[0] = action

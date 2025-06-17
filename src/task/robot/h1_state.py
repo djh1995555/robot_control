@@ -25,6 +25,7 @@ class H1State():
         self.motor_torque_cur = [0] * model_nv
         self.motor_torque_cur_link = [0] * model_nv
         self.motor_torque_des = [0] * model_nv
+        self.motor_torque_out = [0] * model_nv
 
         self.q = np.zeros(model_nv + 1)  # q =  [global_base_position, global_base_quaternion, joint_positions]
         self.dq = np.zeros(model_nv)     # dq = [global_base_velocity_linear, global_base_velocity_angular, joint_velocities]
@@ -67,22 +68,7 @@ class H1State():
 
         self.motion_state = MotionState.Stand
 
-    def update(self):
-        self.R_B2W = Rotation.from_euler('zyx', [self.base_rpy[0],self.base_rpy[1],self.base_rpy[2]]).as_matrix()
-        self.base_omega_W = self.R_B2W @ self.base_omega.T
+        self.width_hips = 0.229
 
-        self.q[0] = self.base_pos[0]
-        self.q[1] = self.base_pos[1]
-        self.q[2] = self.base_pos[2]
-        self.q[3] = self.base_quat[0]
-        self.q[4] = self.base_quat[1]
-        self.q[5] = self.base_quat[2]
-        self.q[6] = self.base_quat[3]
-        for i in range(self.model_nv - 6):
-            self.q[i + 7] = self.motor_pos_cur[i]
 
-        self.dq[0:3] = self.base_vel
-        self.dq[3:6] = self.base_omega_W
-        for i in range(self.model_nv-6):
-            self.dq[i+6] = self.motor_vel_cur[i]
         

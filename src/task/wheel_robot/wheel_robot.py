@@ -23,7 +23,7 @@ class WheelRobot(BaseTask):
 
         data.actuator('motor_l_wheel').ctrl = [0]
         data.actuator('motor_r_wheel').ctrl = [0]
-        return data
+        return None, data
     
     def mujoco_action_adoption(self, action, model, data):
         data.actuator('motor_l_wheel').ctrl[0] = action[0]

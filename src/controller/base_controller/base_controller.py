@@ -2,6 +2,9 @@ class BaseContoller():
     def __init__(self, cfg):
         self.cfg = cfg
 
+    def init_components(self, mj_model, mj_data):
+        None
+        
     def reset(self, data):
         None
 

@@ -17,3 +17,20 @@ mpc_cfg: {
 
 }
 
+joy_stick: {
+  xv_des: 0.7
+}
+
+robot_size: {
+  leg_length: 1.01,
+  hip_width: 0.229,
+  foot_height: 0.07,
+}
+foot_placement_cfg: {
+  kp_vx: 0.03,
+  kp_vy: 0.035,
+  kp_wz: 0.03,
+  setp_height: 0.12,
+  T_swing: 0.4,
+}
+

@@ -9,7 +9,9 @@ from scipy.spatial.transform import Rotation
 class H1Robot(LeggedRobot):
     def __init__(self, cfg):
         super().__init__(cfg)
-        urdf_path = cfg['urdf_path']
+
+    def mujoco_init_state(self, sim_model, sim_data):
+        urdf_path = self.cfg['urdf_path']
         self.model_biped = pin.buildModelFromUrdf(urdf_path, pin.JointModelFreeFlyer())
         self.state = H1State(self.model_biped.nv)
 
@@ -26,28 +28,26 @@ class H1Robot(LeggedRobot):
         self.gyro_sensor_name="baselink-gyro"
         self.acc_sensor_name="baselink-baseAcc"
 
-
-    def mujoco_init_state(self, model, data):
         # init state using mujoco
         self.joint_qpos_id = []
         self.joint_qvel_id = []
         self.joint_dctl_id = []
         
         for joint_name in self.joint_names:
-            joint_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_JOINT, joint_name)
+            joint_id = mujoco.mj_name2id(sim_model, mujoco.mjtObj.mjOBJ_JOINT, joint_name)
             if joint_id == -1:
                 print(f"{joint_name} not found in the XML file!")
                 sys.exit()
                 
             # 存储关节的位置和速度地址
-            self.joint_qpos_id.append(model.jnt_qposadr[joint_id])
-            self.joint_qvel_id.append(model.jnt_dofadr[joint_id])
+            self.joint_qpos_id.append(sim_model.jnt_qposadr[joint_id])
+            self.joint_qvel_id.append(sim_model.jnt_dofadr[joint_id])
             
             # 构造对应的驱动器名称 (假设驱动器名称是关节名前加'M')
             motor_name = "M" + joint_name[1:] if joint_name.startswith('J') else "M_" + joint_name
             
             # 获取驱动器ID
-            actuator_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_ACTUATOR, motor_name)
+            actuator_id = mujoco.mj_name2id(sim_model, mujoco.mjtObj.mjOBJ_ACTUATOR, motor_name)
             if actuator_id == -1:
                 print(f"{motor_name} not found in the XML file!")
                 sys.exit()
@@ -59,22 +59,22 @@ class H1Robot(LeggedRobot):
         self.gyro_sensor_name="baselink-gyro"
         self.acc_sensor_name="baselink-baseAcc"
 
-        self.base_body_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_BODY, self.base_name)
-        self.orientataion_sensor_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_SENSOR, self.orientation_sensor_name)
-        self.vel_sensor_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_SENSOR, self.vel_sensor_name)
-        self.gyro_sensor_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_SENSOR, self.gyro_sensor_name)
-        self.acc_sensor_id = mujoco.mj_name2id(model, mujoco.mjtObj.mjOBJ_SENSOR, self.acc_sensor_name)
+        self.base_body_id = mujoco.mj_name2id(sim_model, mujoco.mjtObj.mjOBJ_BODY, self.base_name)
+        self.orientataion_sensor_id = mujoco.mj_name2id(sim_model, mujoco.mjtObj.mjOBJ_SENSOR, self.orientation_sensor_name)
+        self.vel_sensor_id = mujoco.mj_name2id(sim_model, mujoco.mjtObj.mjOBJ_SENSOR, self.vel_sensor_name)
+        self.gyro_sensor_id = mujoco.mj_name2id(sim_model, mujoco.mjtObj.mjOBJ_SENSOR, self.gyro_sensor_name)
+        self.acc_sensor_id = mujoco.mj_name2id(sim_model, mujoco.mjtObj.mjOBJ_SENSOR, self.acc_sensor_name)
 
         # init mujoco state from cfg
-        return data
+        return self.state, sim_data
     
-    def mujoco_state_adoption(self, model, data):
+    def mujoco_state_adoption(self, sim_model, sim_data):
         for i in range(len(self.joint_names)):
-            self.state.motor_pos_cur[i] = data.qpos[self.joint_qpos_id[i]]
-            self.state.motor_vel_cur[i] = data.qpos[self.joint_qvel_id[i]]
+            self.state.motor_pos_cur[i] = sim_data.qpos[self.joint_qpos_id[i]]
+            self.state.motor_vel_cur[i] = sim_data.qpos[self.joint_qvel_id[i]]
         
         for i in range(4):
-            self.state.base_quat[i] = data.sensordata[model.sensor_adr[self.orientataion_sensor_id] + i]
+            self.state.base_quat[i] = sim_data.sensordata[sim_model.sensor_adr[self.orientataion_sensor_id] + i]
         # first_element = base_quat.pop(0)
         # base_quat.append(first_element)
 
@@ -94,13 +94,34 @@ class H1Robot(LeggedRobot):
 
         for i in range(3):
             pos_pre = self.state.base_pos[i]
-            self.state.base_acc[i] = data.sensordata[model.sensor_adr[self.acc_sensor_id] + i]
-            self.state.base_vel[i] = (self.state.base_pos[i] - pos_pre) / (model.opt.timestep)
-            self.state.base_omega[i] = data.sensordata[model.sensor_adr[self.gyro_sensor_id] + i]
+            self.state.base_acc[i] = sim_data.sensordata[sim_model.sensor_adr[self.acc_sensor_id] + i]
+            self.state.base_vel[i] = (self.state.base_pos[i] - pos_pre) / (sim_model.opt.timestep)
+            self.state.base_omega[i] = sim_data.sensordata[sim_model.sensor_adr[self.gyro_sensor_id] + i]
 
-        self.state.base_pos = data.xpos[self.base_body_id,:]
-        self.state.update()
+        self.state.base_pos = sim_data.xpos[self.base_body_id,:]
+
+        self.state.R_B2W = Rotation.from_euler('zyx', [self.state.base_rpy[0],self.state.base_rpy[1],self.state.base_rpy[2]]).as_matrix()
+        self.state.base_omega_W = self.state.R_B2W @ self.state.base_omega.T
+
+        self.state.q[0] = self.state.base_pos[0]
+        self.state.q[1] = self.state.base_pos[1]
+        self.state.q[2] = self.state.base_pos[2]
+        self.state.q[3] = self.state.base_quat[0]
+        self.state.q[4] = self.state.base_quat[1]
+        self.state.q[5] = self.state.base_quat[2]
+        self.state.q[6] = self.state.base_quat[3]
+        for i in range(self.model_nv - 6):
+            self.state.q[i + 7] = self.state.motor_pos_cur[i]
+
+        self.state.dq[0:3] = self.state.base_vel
+        self.state.dq[3:6] = self.state.base_omega_W
+        for i in range(self.model_nv-6):
+            self.state.dq[i+6] = self.state.motor_vel_cur[i]
+
         return self.state
     
-    def mujoco_action_adoption(self, action, model, data):
-        return data
+    def mujoco_action_adoption(self, action, sim_model, sim_data):
+        for i in range(len(self.joint_names)):
+            sim_data.ctrl[i] = action[i]
+            
+        return sim_data

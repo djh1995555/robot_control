@@ -8,7 +8,7 @@ class BaseTask():
     def mujoco_init_state(self, model, data):
         # init state using mujoco
         # init mujoco state from cfg
-        return data
+        return None, data
     
     def mujoco_state_adoption(self, model, data):
         return data
