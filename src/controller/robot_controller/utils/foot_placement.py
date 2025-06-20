@@ -1,34 +1,7 @@
 import numpy as np
 from dataclasses import dataclass
 from typing import List
-from enum import Enum, auto
-
-class LegState(Enum):
-    LSt = auto()  # Left stance
-    RSt = auto()  # Right stance
-    DSt = auto()  # Double stance
-
-@dataclass
-class DataBus:
-    swingStartPos_W: np.ndarray
-    js_vel_des: np.ndarray
-    js_omega_des: np.ndarray
-    dq: np.ndarray
-    phi: float
-    posHip_W: np.ndarray
-    posST_W: np.ndarray
-    base_pos: np.ndarray
-    tSwing: float
-    theta0: float
-    rpy: np.ndarray
-    base_omega_W: np.ndarray
-    width_hips: float
-    legState: LegState
-    swingDesPosCur_W: np.ndarray
-    swingDesPosFinal_W: np.ndarray
-    swing_fe_rpy_des_W: np.ndarray
-    swing_fe_pos_des_W: np.ndarray
-    base_rpy_des: np.ndarray
+from src.task.robot.data_bus import *
 
 class Bezier1D:
     def __init__(self):
@@ -64,7 +37,7 @@ class FootPlacement:
         self.curV_W = np.zeros(3)
         self.desWz_W = 0.0
         self.base_pos = np.zeros(3)
-        self.legState = LegState.DSt
+        self.legState = LegState.Lst
         
         # Private variables
         self.pDesCur = np.zeros(3)

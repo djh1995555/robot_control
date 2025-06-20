@@ -26,3 +26,36 @@ def eul2quat(roll: float, pitch: float, yaw: float):
     from scipy.spatial.transform import Rotation
     rot = Rotation.from_euler('xyz', [roll, pitch, yaw])
     return rot.as_quat()
+
+def diffRot(Rcur, Rdes):
+    """
+    Compute the difference between two rotation matrices as a 3D vector.
+    
+    Parameters:
+    Rcur -- current rotation matrix (3x3 numpy array)
+    Rdes -- desired rotation matrix (3x3 numpy array)
+    
+    Returns:
+    w -- 3D vector representing the rotation difference
+    """
+    R = Rcur.T @ Rdes
+    w = np.zeros(3)
+    
+    # Check if R is identity (within tolerance)
+    if np.allclose(R, np.eye(3), atol=1e-5) and abs(R[0,0]) + abs(R[1,1]) + abs(R[2,2]) - 3 < 1e-3:
+        w = np.zeros(3)
+    # Check if R is diagonal (within tolerance)
+    elif np.allclose((R - np.diag(np.diag(R))), np.zeros((3,3)), atol=1e-5):
+        w = np.array([R[0,0] + 1, R[1,1] + 1, R[2,2] + 1])
+        w = w * np.pi / 2.0
+    else:
+        l = np.array([
+            R[2,1] - R[1,2],
+            R[0,2] - R[2,0],
+            R[1,0] - R[0,1]
+        ])
+        sita = np.arctan2(np.linalg.norm(l), R[0,0] + R[1,1] + R[2,2] - 1)
+        w = sita * l / np.linalg.norm(l)
+    
+    w = Rcur @ w
+    return w

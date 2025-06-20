@@ -1,15 +1,5 @@
 import numpy as np
-from enum import Enum, auto
-
-class LegState(Enum):
-    LSt = auto()  # Left stance
-    RSt = auto()  # Right stance
-    DSt = auto()  # Double stance
-
-class MotionState(Enum):
-    Stand = auto()
-    Walk = auto()
-    Walk2Stand = auto()
+from src.task.robot.data_bus import *
 
 class GaitScheduler:
     def __init__(self, tSwing: float = 0.4, dt: float = 0.001):

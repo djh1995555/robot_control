@@ -95,36 +95,36 @@ class PriorityTasks:
                 task.J_pre = task.J @ task.N
                 
                 # Compute weighted pseudo-inverse
-                j_pinv = self.pseudo_inv_right_weighted(task.J_pre, task.W)
-                task.delta_q = des_delta_q + j_pinv @ task.err_x
+                J_pinv = self.pseudo_inv_right_weighted(task.J_pre, task.W)
+                task.delta_q = des_delta_q + J_pinv @ task.err_x
                 task.dq = des_dq
                 
                 ddx_cmd = (task.ddx_des + task.kp @ task.err_x + task.kd @ task.derr_x)
-                dyn_j_pinv = self.dyn_pseudo_inv(task.J_pre, dyn_M_inv, True)
-                task.ddq = des_ddq + dyn_j_pinv @ (ddx_cmd - task.dJ @ dq)
+                dyn_J_pinv = self.dyn_pseudo_inv(task.J_pre, dyn_M_inv, True)
+                task.ddq = des_ddq + dyn_J_pinv @ (ddx_cmd - task.dJ @ dq)
             else:
                 # Subsequent tasks
                 parent_task = self.task_lib[parent_id]
-                j_pinv_parent = self.pseudo_inv_right_weighted(parent_task.J_pre, parent_task.W)
+                J_pinv_parent = self.pseudo_inv_right_weighted(parent_task.J_pre, parent_task.W)
                 
                 # Compute null space projection
                 identity = np.eye(parent_task.J_pre.shape[1])
-                task.N = parent_task.N @ (identity - j_pinv_parent @ parent_task.J_pre)
+                task.N = parent_task.N @ (identity - J_pinv_parent @ parent_task.J_pre)
                 task.J_pre = task.J @ task.N
                 
                 # Compute weighted pseudo-inverse for current task
-                j_pinv = self.pseudo_inv_right_weighted(task.J_pre, task.W)
+                J_pinv = self.pseudo_inv_right_weighted(task.J_pre, task.W)
                 
                 # Update delta_q, dq, ddq
                 task.delta_q = (parent_task.delta_q + 
-                               j_pinv @ (task.err_x - task.J @ parent_task.delta_q))
+                               J_pinv @ (task.err_x - task.J @ parent_task.delta_q))
                 task.dq = (parent_task.dq + 
-                          j_pinv @ (task.dx_des - task.J @ parent_task.dq))
+                          J_pinv @ (task.dx_des - task.J @ parent_task.dq))
                 
                 ddx_cmd = task.ddx_des + task.kp @ task.err_x + task.kd @ task.derr_x
-                dyn_j_pinv = self.dyn_pseudo_inv(task.J_pre, dyn_M_inv, True)
+                dyn_J_pinv = self.dyn_pseudo_inv(task.J_pre, dyn_M_inv, True)
                 task.ddq = (parent_task.ddq + 
-                           dyn_j_pinv @ (ddx_cmd - task.dJ @ dq - task.J @ parent_task.ddq))
+                           dyn_J_pinv @ (ddx_cmd - task.dJ @ dq - task.J @ parent_task.ddq))
             
             # Move to next task in priority chain
             if child_id != -1:
